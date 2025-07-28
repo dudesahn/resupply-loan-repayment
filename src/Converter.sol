@@ -80,7 +80,12 @@ contract Converter {
      * @notice Get the combined claimable REUSD from the permastakers.
      */
     function claimableRewards() public view returns (uint256) {
-        return GOV_STAKER.earned(PERMA_STAKER_CONVEX, address(REUSD)) + GOV_STAKER.earned(PERMA_STAKER_YEARN, address(REUSD));
+        uint256 amount;
+        if (GOV_STAKER.rewardRedirect(PERMA_STAKER_CONVEX) == address(this)) 
+            amount += GOV_STAKER.earned(PERMA_STAKER_CONVEX, address(REUSD));
+        if (GOV_STAKER.rewardRedirect(PERMA_STAKER_YEARN) == address(this))
+            amount += GOV_STAKER.earned(PERMA_STAKER_YEARN, address(REUSD));
+        return amount;
     }
 
     function _getExpectedOut(uint256 amount) internal view returns (uint256) {
@@ -122,4 +127,5 @@ interface ILoanAccounting {
 interface IStaking {
     function getReward(address user) external;
     function earned(address user, address token) external view returns (uint256);
+    function rewardRedirect(address user) external view returns (address);
 }
