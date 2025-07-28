@@ -32,6 +32,8 @@ contract Converter {
         repayer = ILoanAccounting(_repayer);
         CRVUSD.approve(address(_repayer), type(uint256).max);
         REUSD.approve(address(POOL), type(uint256).max);
+        approvedCallers[OWNER] = true;
+        emit CallerApproved(OWNER, true);
     }
 
     function convertAndRepay(bool doClaims, uint256 minOut) onlyApproved external {
